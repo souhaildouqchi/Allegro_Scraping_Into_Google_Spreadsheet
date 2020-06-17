@@ -41,10 +41,14 @@ async function process() {
       let entryData = response.data;
       //console.log(entryData);
       let contact = entryData.summary.offer.contact;
+      const loc = (
+        entryData.summary.offer.delivery.summary[0].value.text || ","
+      ).split(",");
       let entry = {
         ...list[i],
         phone_number: contact.phones.length > 0 ? contact.phones[0].number : "",
-        region: entryData.summary.offer.delivery.summary[0].value.text,
+        city: loc[0],
+        region: loc[1],
         startingAt: entryData.summary.offer.publication.startingAt || "",
         endingAt: entryData.summary.offer.publication.endingAt,
         date: new Date().toLocaleDateString(),
