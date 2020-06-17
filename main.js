@@ -21,7 +21,13 @@ async function gsrun(cl) {
     let excelFile = await wb.xlsx.readFile("./allegro.xlsx");
     let ws = excelFile.getWorksheet("Sheet1"); // the name of the worksheet
     let data = ws.getSheetValues();
-
+    // to get data from the spreed sheet
+    const opt = {
+      spreadsheetId: "1FtYYqSQ5Xf-EByW8xeQcqnt4WFq9MgnnbtJjOlJDJV0",
+      range: "allegro_new",
+    };
+    let data1 = await gsapi.spreadsheets.values.get(opt);
+    length = data1.data.values.length;
     /* data = data.map(function (r) {
       // so we dont get the first empty row and the other rows we dont want
       return [
@@ -40,24 +46,22 @@ async function gsrun(cl) {
         r[19],
       ]; // add more rows to get more data 
     }); */
-    data.shift();
+
     /* to insert things in the spreed sheet */
+    if (length > 0) {
+      data.shift();
+      data.shift();
+    }
 
     const updateOptions = {
       spreadsheetId: "1FtYYqSQ5Xf-EByW8xeQcqnt4WFq9MgnnbtJjOlJDJV0",
-      range: "allegro!A1",
+      range: `allegro!A${length + 1}`,
       valueInputOption: "USER_ENTERED",
       resource: { values: data },
     };
+
     let res = await gsapi.spreadsheets.values.update(updateOptions);
     console.log(res);
-    // to get data from the spreed sheet
-    /*   const opt = {
-      spreadsheetId: "1FtYYqSQ5Xf-EByW8xeQcqnt4WFq9MgnnbtJjOlJDJV0",
-      range: "A1:B5",
-    };
-    let data = await gsapi.spreadsheets.values.get(opt);
-    console.log(data.data.values); */
   } catch (err) {
     console.error(err);
   }
