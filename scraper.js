@@ -50,7 +50,8 @@ async function process() {
         city: loc[0],
         region: loc[1],
         startingAt: entryData.summary.offer.publication.startingAt || "",
-        endingAt: entryData.summary.offer.publication.endingAt,
+        delivery: entryData.summary.offer.delivery.summary[0].value.text || "",
+        endingAt: entryData.summary.offer.publication.endingAt || "",
         date: new Date().toLocaleDateString(),
       };
 

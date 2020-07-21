@@ -13,51 +13,35 @@ client.authorize(function (err, tokens) {
     console.log("Connected");
   }
 });
-
+// data == datalocal
+// data1 == datacloud
 async function gsrun(cl) {
   try {
     const gsapi = google.sheets({ version: "v4", auth: cl });
     const wb = new Excel.Workbook();
     let excelFile = await wb.xlsx.readFile("./allegro.xlsx");
     let ws = excelFile.getWorksheet("Sheet1"); // the name of the worksheet
-    let data = ws.getSheetValues();
+    let datalocal = ws.getSheetValues();
     // to get data from the spreed sheet
     const opt = {
       spreadsheetId: "1FtYYqSQ5Xf-EByW8xeQcqnt4WFq9MgnnbtJjOlJDJV0",
-      range: "allegro_new",
+      range: "allegro_all",
     };
-    let data1 = await gsapi.spreadsheets.values.get(opt);
-    length = data1.data.values.length;
-    /* data = data.map(function (r) {
-      // so we dont get the first empty row and the other rows we dont want
-      return [
-        r[1],
-        r[2],
-        r[7],
-        r[8],
-        r[9],
-        r[10],
-        r[12],
-        r[13],
-        r[14],
-        r[16],
-        r[17],
-        r[18],
-        r[19],
-      ]; // add more rows to get more data 
-    }); */
+    let datacloud = await gsapi.spreadsheets.values.get(opt);
+    valuesImport = datacloud.data.values || [];
+    length = valuesImport.length > 0 ? valuesImport.length : 0;
 
     /* to insert things in the spreed sheet */
     if (length > 0) {
-      data.shift();
-      data.shift();
+      datalocal.shift();
+      datalocal.shift();
     }
 
     const updateOptions = {
       spreadsheetId: "1FtYYqSQ5Xf-EByW8xeQcqnt4WFq9MgnnbtJjOlJDJV0",
-      range: `allegro!A${length + 1}`,
+      range: `allegro_all!A${length + 1}`,
       valueInputOption: "USER_ENTERED",
-      resource: { values: data },
+      resource: { values: datalocal },
     };
 
     let res = await gsapi.spreadsheets.values.update(updateOptions);
